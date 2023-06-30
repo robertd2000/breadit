@@ -1,9 +1,9 @@
 import React from "react";
 import { notFound } from "next/navigation";
+import { MiniCreatePost, PostFeed } from "@/components/Post";
 import { getAuthSession } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { INFINITE_SCROLL_PAGINATION_RESULTS } from "../../../../config";
-import MiniCreatePost from "@/components/Post/MiniCreatePost/MiniCreatePost";
 
 interface PageProps {
   params: {
@@ -42,7 +42,7 @@ const Page = async ({ params }: PageProps) => {
         r/{subreddit.name}
       </h1>
       <MiniCreatePost session={session} />
-      {/* <PostFeed initialPosts={subreddit.posts} subredditName={subreddit.name} /> */}
+      <PostFeed initialPosts={subreddit.posts} subredditName={subreddit.name} />
     </>
   );
 };

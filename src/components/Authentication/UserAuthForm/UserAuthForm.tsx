@@ -1,33 +1,14 @@
 "use client";
 
-import { FC, useState } from "react";
-import { signIn } from "next-auth/react";
+import { FC } from "react";
 import { Button } from "../../ui/Button";
+import { useAuthForm } from "@/hooks/auth/useAuthForm";
 import { Icons } from "../../Icons/Icons";
-import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { UserAuthFormProps } from "./UserAuthForm.interface";
 
 const UserAuthForm: FC<UserAuthFormProps> = ({ className, ...props }) => {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { toast } = useToast();
-
-  const loginWithGoogle = async () => {
-    setIsLoading(true);
-
-    try {
-      await signIn("google");
-    } catch (error) {
-      //toast
-      toast({
-        title: "There was a problem",
-        description: "There was an error with Google authorization",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const { loginWithGoogle, isLoading } = useAuthForm();
 
   return (
     <div className={cn("flex justify-center", className)} {...props}>
