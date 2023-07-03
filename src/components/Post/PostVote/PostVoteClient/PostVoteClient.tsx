@@ -1,43 +1,22 @@
 "use client";
 
-import React, { FC, useEffect, useState } from "react";
-import { PostVoteClientProps } from "./PostVoteClient.interface";
-import { useCustomToast } from "@/hooks/use-custom-toast";
-import { usePrevious } from "@mantine/hooks";
-import { Button } from "@/components/ui/Button";
+import React, { FC } from "react";
 import { ArrowBigDown, ArrowBigUp } from "lucide-react";
+import { Button } from "@/components/ui/Button";
+import { usePostVotes } from "@/hooks/post/votes/usePostVotes";
 import { cn } from "@/lib/utils";
-import { useMutation } from "@tanstack/react-query";
-import { VoteType } from "@prisma/client";
-import axios from "axios";
-import { PostVoteRequest } from "@/lib/validators/vote";
+import { PostVoteClientProps } from "./PostVoteClient.interface";
 
 const PostVoteClient: FC<PostVoteClientProps> = ({
   postId,
   initialVotesAmt,
   initialVote,
 }) => {
-  const { loginToast } = useCustomToast();
-
-  const [votesAmt, setVotesAmt] = useState<number>(initialVotesAmt);
-  const [currentVote, setCurrentVote] = useState(initialVote);
-
-  const prevVote = usePrevious(currentVote);
-
-  const { mutate: vote } = useMutation({
-    mutationFn: async (type: VoteType) => {
-      const payload: PostVoteRequest = {
-        voteType: type,
-        postId: postId,
-      };
-
-      await axios.patch("/api/subreddit/post/vote", payload);
-    },
-  });
-
-  useEffect(() => {
-    setCurrentVote(initialVote);
-  }, [initialVote]);
+  const { votesAmt, currentVote, vote } = usePostVotes(
+    postId,
+    initialVotesAmt,
+    initialVote
+  );
 
   return (
     <div className="flex flex-col gap-4 sm:gap-0 pr-6 sm:w-20 pb-4 sm:pb-0">

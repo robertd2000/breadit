@@ -1,65 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
-import { useRouter } from "next/navigation";
-import { useMutation } from "@tanstack/react-query";
-import axios, { AxiosError } from "axios";
+import React from "react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
-import { toast } from "@/hooks/use-toast";
-import { useCustomToast } from "@/hooks/use-custom-toast";
-import { CreateSubredditPayload } from "@/lib/validators/subreddit";
+import { useCreateSubreddit } from "@/hooks/pages/r/useCreateSubreddit";
 
 const Page = () => {
-  const [input, setInput] = useState<string>("");
-
-  const router = useRouter();
-
-  const { loginToast } = useCustomToast();
-
-  const { mutate: createCommunity, isLoading } = useMutation({
-    //move to api
-    mutationFn: async () => {
-      const payload: CreateSubredditPayload = {
-        name: input,
-      };
-
-      const { data } = await axios.post("/api/subreddit", payload);
-      return data as string;
-    },
-    onError(error) {
-      if (error instanceof AxiosError) {
-        if (error.response?.status === 409) {
-          return toast({
-            title: "Subreddit already exists.",
-            description: "Please choose a different name.",
-            variant: "destructive",
-          });
-        }
-
-        if (error.response?.status === 422) {
-          return toast({
-            title: "Invalid subreddit name.",
-            description: "Please choose a name between 3 and 21 letters.",
-            variant: "destructive",
-          });
-        }
-
-        if (error.response?.status === 401) {
-          return loginToast();
-        }
-      }
-
-      toast({
-        title: "There was an error.",
-        description: "Could not create subreddit.",
-        variant: "destructive",
-      });
-    },
-    onSuccess(data) {
-      router.push(`/r/${data}`);
-    },
-  });
+  const { input, setInput, createCommunity, isLoading, router } =
+    useCreateSubreddit();
 
   return (
     <div className="container flex items-center h-full max-w-3xl mx-auto">
